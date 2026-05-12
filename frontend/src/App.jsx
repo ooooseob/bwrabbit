@@ -11,11 +11,11 @@ export default function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/game/:steamAppId" element={<GameDetail />} />
-        <Route path="/fetch" element={<Fetch />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path='/' element={<Home />} />
+        <Route path='/search' element={<Search />} />
+        <Route path='/game/:steamAppId' element={<GameDetail />} />
+        <Route path='/fetch' element={<Fetch />} />
+        <Route path='/chat' element={<Chat />} />
       </Routes>
     </BrowserRouter>
   )

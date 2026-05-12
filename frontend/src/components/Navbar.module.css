@@ -33,7 +33,9 @@
   border-radius: 6px;
   color: var(--text-muted);
   font-size: 0.9rem;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .link:hover {

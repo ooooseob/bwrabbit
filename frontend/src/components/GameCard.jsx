@@ -1,15 +1,24 @@
 import { Link } from 'react-router-dom'
 import styles from './GameCard.module.css'
 
+/**
+ * 개별 게임 정보를 카드 형태로 표시하는 컴포넌트
+ *
+ * 이미지, 이름, 짧은 설명, 리뷰 기반 호감도, 가격 및 장르 태그를 렌더링합니다.
+ * 클릭 시 해당 게임의 상세 페이지로 이동합니다.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Game} props.game - 표시할 게임 정보 객체
+ * @returns {import('react').JSX.Element} GameCard 컴포넌트
+ */
 export default function GameCard({ game }) {
   const total = (game.positiveReviews ?? 0) + (game.negativeReviews ?? 0)
   const ratio = total > 0 ? Math.round((game.positiveReviews / total) * 100) : null
 
   return (
     <Link to={`/game/${game.steamAppId}`} className={styles.card}>
-      {game.headerImage && (
-        <img src={game.headerImage} alt={game.name} className={styles.img} />
-      )}
+      {game.headerImage && <img src={game.headerImage} alt={game.name} className={styles.img} />}
       <div className={styles.body}>
         <h3 className={styles.name}>{game.name}</h3>
         {game.shortDescription && (
@@ -17,9 +26,7 @@ export default function GameCard({ game }) {
         )}
         <div className={styles.meta}>
           {ratio !== null && (
-            <span className={ratio >= 70 ? styles.positive : styles.negative}>
-              호감도 {ratio}%
-            </span>
+            <span className={ratio >= 70 ? styles.positive : styles.negative}>호감도 {ratio}%</span>
           )}
           {game.priceFinal != null && (
             <span className={styles.price}>
@@ -29,8 +36,10 @@ export default function GameCard({ game }) {
         </div>
         {game.genres?.length > 0 && (
           <div className={styles.tags}>
-            {game.genres.slice(0, 3).map((g) => (
-              <span key={g} className={styles.tag}>{g}</span>
+            {game.genres.slice(0, 3).map(g => (
+              <span key={g} className={styles.tag}>
+                {g}
+              </span>
             ))}
           </div>
         )}

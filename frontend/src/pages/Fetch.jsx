@@ -1,31 +1,26 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchGame } from '../api/game'
+import { useAsync } from '../hooks/useAsync'
+import { useInput } from '../hooks/useInput'
 import styles from './Fetch.module.css'
 
+/**
+ * 게임 데이터 수집 및 등록 페이지 컴포넌트
+ */
 export default function Fetch() {
-  const [appId, setAppId] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState(null)
-  const [error, setError] = useState(null)
+  const [appId, onChangeAppId] = useInput('')
+  const { execute, loading, data: result, error } = useAsync(fetchGame)
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  /**
+   * 데이터 수집 폼 제출 이벤트 핸들러
+   */
+  const handleSubmit = e => {
     e.preventDefault()
     const id = Number(appId)
-    if (!id || id <= 0) { setError('유효한 App ID를 입력하세요.'); return }
+    if (!id || id <= 0) return // 에러 처리는 execute 내부 또는 여기서 추가 가능
 
-    setLoading(true)
-    setError(null)
-    setResult(null)
-
-    fetchGame(id)
-      .then(setResult)
-      .catch((err) => {
-        const msg = err?.response?.data?.message || err?.message || '알 수 없는 오류'
-        setError(`게임 데이터 수집 실패: ${msg}`)
-      })
-      .finally(() => setLoading(false))
+    execute(id)
   }
 
   return (
@@ -37,20 +32,21 @@ export default function Fetch() {
         </p>
         <p className={styles.hint}>
           App ID는 Steam 게임 페이지 URL에서 확인할 수 있습니다.
-          <br />예: store.steampowered.com/app/<strong>570</strong> → App ID: 570
+          <br />
+          예: store.steampowered.com/app/<strong>570</strong> → App ID: 570
         </p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <input
             className={styles.input}
-            type="number"
-            placeholder="Steam App ID (예: 570)"
+            type='number'
+            placeholder='Steam App ID (예: 570)'
             value={appId}
-            onChange={(e) => setAppId(e.target.value)}
+            onChange={onChangeAppId}
             disabled={loading}
-            min="1"
+            min='1'
           />
-          <button type="submit" className={styles.btn} disabled={loading || !appId}>
+          <button type='submit' className={styles.btn} disabled={loading || !appId}>
             {loading ? '수집 중...' : '데이터 수집'}
           </button>
         </form>

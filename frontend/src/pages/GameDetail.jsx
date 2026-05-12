@@ -1,20 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getGame } from '../api/game'
+import { useAsync } from '../hooks/useAsync'
 import styles from './GameDetail.module.css'
 
+/**
+ * 게임 상세 정보 페이지 컴포넌트
+ */
 export default function GameDetail() {
   const { steamAppId } = useParams()
-  const [game, setGame] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { execute, loading, data: game, error } = useAsync(getGame)
 
   useEffect(() => {
-    getGame(steamAppId)
-      .then(setGame)
-      .catch(() => setError('게임 정보를 불러올 수 없습니다.'))
-      .finally(() => setLoading(false))
-  }, [steamAppId])
+    execute(steamAppId)
+  }, [steamAppId, execute])
 
   if (loading) return <div className={styles.center}>불러오는 중...</div>
   if (error) return <div className={styles.center + ' ' + styles.error}>{error}</div>
@@ -25,10 +24,14 @@ export default function GameDetail() {
 
   return (
     <main className={styles.main}>
-      <Link to="/search" className={styles.back}>← 검색으로</Link>
+      <Link to='/search' className={styles.back}>
+        ← 검색으로
+      </Link>
 
       <div className={styles.header}>
-        {game.headerImage && <img src={game.headerImage} alt={game.name} className={styles.headerImg} />}
+        {game.headerImage && (
+          <img src={game.headerImage} alt={game.name} className={styles.headerImg} />
+        )}
         <div className={styles.headerInfo}>
           <h1 className={styles.title}>{game.name}</h1>
           {game.shortDescription && <p className={styles.desc}>{game.shortDescription}</p>}
@@ -49,7 +52,11 @@ export default function GameDetail() {
           </div>
           {game.genres?.length > 0 && (
             <div className={styles.tags}>
-              {game.genres.map((g) => <span key={g} className={styles.tag}>{g}</span>)}
+              {game.genres.map(g => (
+                <span key={g} className={styles.tag}>
+                  {g}
+                </span>
+              ))}
             </div>
           )}
         </div>
@@ -59,7 +66,11 @@ export default function GameDetail() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>유저 태그</h2>
           <div className={styles.tags}>
-            {game.tags.slice(0, 15).map((t) => <span key={t} className={styles.tag}>{t}</span>)}
+            {game.tags.slice(0, 15).map(t => (
+              <span key={t} className={styles.tag}>
+                {t}
+              </span>
+            ))}
           </div>
         </section>
       )}
@@ -68,8 +79,8 @@ export default function GameDetail() {
         <h2 className={styles.sectionTitle}>Steam 링크</h2>
         <a
           href={`https://store.steampowered.com/app/${game.steamAppId}`}
-          target="_blank"
-          rel="noreferrer"
+          target='_blank'
+          rel='noreferrer'
           className={styles.steamLink}
         >
           Steam에서 보기 →
