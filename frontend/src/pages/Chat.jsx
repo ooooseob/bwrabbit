@@ -1,41 +1,56 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { sendQuery } from '../api/game'
+import { useAsync } from '../hooks/useAsync'
+import { useInput } from '../hooks/useInput'
 import styles from './Chat.module.css'
 
 const SESSION_ID = `session_${Date.now()}`
 
+/**
+ * AI 게임 분석 채팅 페이지 컴포넌트
+ */
 export default function Chat() {
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: '안녕하세요! 게임에 대해 무엇이든 물어보세요.\n예: "FPS 게임 추천해줘", "엘든 링 어때?", "협동 게임 뭐가 있어?"' },
+    {
+      role: 'assistant',
+      text: '안녕하세요! 게임에 대해 무엇이든 물어보세요.\n예: "FPS 게임 추천해줘", "엘든 링 어때?", "협동 게임 뭐가 있어?"',
+    },
   ])
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [input, onChangeInput, resetInput] = useInput('')
+  const { execute: sendMessage, loading } = useAsync(sendQuery)
   const bottomRef = useRef(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  /**
+   * 사용자 메시지 전송 및 AI 응답 처리 핸들러
+   */
   const handleSend = async () => {
     const text = input.trim()
     if (!text || loading) return
 
-    setMessages((prev) => [...prev, { role: 'user', text }])
-    setInput('')
-    setLoading(true)
+    setMessages(prev => [...prev, { role: 'user', text }])
+    resetInput()
 
     try {
-      const res = await sendQuery(text, SESSION_ID)
-      setMessages((prev) => [...prev, { role: 'assistant', text: res.answer ?? '응답을 받지 못했습니다.' }])
+      const res = await sendMessage(text, SESSION_ID)
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', text: res.answer ?? '응답을 받지 못했습니다.' },
+      ])
     } catch (err) {
+      // useAsync에서 처리된 에러 메시지를 사용하거나 직접 처리
       const detail = err?.response?.data?.message || err?.message || '알 수 없는 오류'
-      setMessages((prev) => [...prev, { role: 'assistant', text: `오류: ${detail}`, error: true }])
-    } finally {
-      setLoading(false)
+      setMessages(prev => [...prev, { role: 'assistant', text: `오류: ${detail}`, error: true }])
     }
   }
 
-  const handleKeyDown = (e) => {
+  /**
+   * 텍스트 영역에서의 키보드 입력 처리 핸들러
+   */
+  const handleKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
@@ -51,7 +66,14 @@ export default function Chat() {
 
       <div className={styles.messages}>
         {messages.map((m, i) => (
-          <div key={i} className={m.role === 'user' ? styles.userMsg : `${styles.aiMsg}${m.error ? ' ' + styles.errorMsg : ''}`}>
+          <div
+            key={i}
+            className={
+              m.role === 'user'
+                ? styles.userMsg
+                : `${styles.aiMsg}${m.error ? ' ' + styles.errorMsg : ''}`
+            }
+          >
             {m.role === 'assistant' && <span className={styles.aiLabel}>AI</span>}
             <p className={styles.msgText}>{m.text}</p>
           </div>
@@ -68,9 +90,9 @@ export default function Chat() {
       <div className={styles.inputArea}>
         <textarea
           className={styles.textarea}
-          placeholder="게임에 대해 질문하세요... (Enter로 전송, Shift+Enter 줄바꿈)"
+          placeholder='게임에 대해 질문하세요... (Enter로 전송, Shift+Enter 줄바꿈)'
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={onChangeInput}
           onKeyDown={handleKeyDown}
           disabled={loading}
           rows={2}

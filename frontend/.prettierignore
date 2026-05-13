@@ -1,0 +1,21 @@
+# Dependency & build artifacts
+node_modules
+.next
+dist
+build
+out
+
+# Environment & lock files
+.env*
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Generated assets
+coverage
+storybook-static
+public
+
+# Misc
+.vercel
+.pnpm-store
