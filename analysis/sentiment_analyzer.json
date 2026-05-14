@@ -1,0 +1,16 @@
+{
+  "INPUT_FILENAME": "multilingual_reviews.csv",
+  "TEXT_COL": "text",
+  "OUTPUT_FILENAME": "multilingual_reviews_sentiment.md",
+  "OUTPUT_CSV": "multilingual_reviews_sentiment.csv",
+  "BATCH_SIZE": 32,
+  "MAX_ROWS": 0,
+  "_schema": {
+    "INPUT_FILENAME": { "label": "입력 파일명", "hint": "_company/data/ 안의 CSV" },
+    "TEXT_COL":       { "label": "텍스트 컬럼명", "hint": "감성 분석할 텍스트가 담긴 컬럼" },
+    "OUTPUT_FILENAME":{ "label": "리포트 파일명", "hint": "_company/reports/ 에 저장" },
+    "OUTPUT_CSV":     { "label": "결과 CSV 파일명", "hint": "_company/data/ 에 저장. 원본 + lang/sentiment/score 컬럼 추가" },
+    "BATCH_SIZE":     { "label": "배치 크기", "hint": "한 번에 처리할 행 수. GPU 있으면 64~128 권장" },
+    "MAX_ROWS":       { "label": "최대 행 수", "hint": "0이면 전체 처리. 테스트 시 100 등으로 제한 가능" }
+  }
+}

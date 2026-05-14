@@ -1,0 +1,18 @@
+{
+  "INPUT_FILENAME":  "fatigue_survey.csv",
+  "QUESTION_COLS":   ["q1", "q2", "q3", "q4", "q5"],
+  "ITEM_COL":        "",
+  "TIME_COL":        "minute",
+  "SCALE_MAX":       5,
+  "OUTPUT_FILENAME": "fatigue_survey_report.md",
+  "OUTPUT_PLOT":     "fatigue_survey_plot.png",
+  "_schema": {
+    "INPUT_FILENAME":  { "label": "입력 파일명",      "hint": "_company/data/ 안의 CSV" },
+    "QUESTION_COLS":   { "label": "문항 컬럼 목록",   "hint": "JSON 배열. Likert 점수가 있는 컬럼들" },
+    "ITEM_COL":        { "label": "응답자 ID 컬럼",   "hint": "빈 문자열이면 사용 안 함" },
+    "TIME_COL":        { "label": "시간 컬럼명",      "hint": "분 단위 컬럼. 피로도 곡선 생성에 사용. 빈 문자열이면 생략" },
+    "SCALE_MAX":       { "label": "Likert 척도 최댓값", "hint": "보통 5 또는 7" },
+    "OUTPUT_FILENAME": { "label": "리포트 파일명",    "hint": "_company/reports/ 에 저장" },
+    "OUTPUT_PLOT":     { "label": "차트 PNG 파일명",  "hint": "_company/reports/ 에 저장" }
+  }
+}

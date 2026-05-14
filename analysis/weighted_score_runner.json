@@ -1,0 +1,30 @@
+{
+  "INPUT_FILENAME":   "genre_scores.csv",
+  "ITEM_COL":         "genre",
+  "SCORE_COLS":       ["input_precision", "marketing_conversion", "hardware_friction", "core_loop"],
+  "WEIGHTS":          {
+    "input_precision":      1.0,
+    "marketing_conversion": 1.5,
+    "hardware_friction":    1.0,
+    "core_loop":            1.5
+  },
+  "HIGHER_IS_BETTER": {
+    "input_precision":      false,
+    "marketing_conversion": true,
+    "hardware_friction":    false,
+    "core_loop":            true
+  },
+  "NORMALIZE":        true,
+  "OUTPUT_FILENAME":  "genre_scores_weighted.md",
+  "OUTPUT_PLOT":      "genre_scores_weighted.png",
+  "_schema": {
+    "INPUT_FILENAME":   { "label": "입력 파일명",      "hint": "_company/data/ 안의 CSV" },
+    "ITEM_COL":         { "label": "항목 컬럼명",      "hint": "각 행의 이름(장르명 등)" },
+    "SCORE_COLS":       { "label": "지표 컬럼 목록",   "hint": "JSON 배열. 점수가 들어있는 컬럼들" },
+    "WEIGHTS":          { "label": "지표별 가중치",    "hint": "미지정 컬럼은 1.0 자동 적용" },
+    "HIGHER_IS_BETTER": { "label": "높을수록 유리 여부", "hint": "false면 반전 적용 (낮을수록 유리)" },
+    "NORMALIZE":        { "label": "min-max 정규화",   "hint": "true 권장. false면 원본 값 그대로" },
+    "OUTPUT_FILENAME":  { "label": "리포트 파일명",    "hint": "_company/reports/ 에 저장" },
+    "OUTPUT_PLOT":      { "label": "바 차트 PNG",      "hint": "_company/reports/ 에 저장" }
+  }
+}

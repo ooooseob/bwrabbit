@@ -1,0 +1,25 @@
+{
+  "INPUT_FILENAME":   "genre_scores.csv",
+  "ITEM_COL":         "genre",
+  "SCORE_COLS":       ["input_precision", "marketing_conversion", "hardware_friction", "core_loop"],
+  "HIGHER_IS_BETTER": {
+    "input_precision":      false,
+    "marketing_conversion": true,
+    "hardware_friction":    false,
+    "core_loop":            true
+  },
+  "NORMALIZE":        true,
+  "MAX_ITEMS":        8,
+  "OUTPUT_FILENAME":  "genre_scores_radar.md",
+  "OUTPUT_PLOT":      "genre_scores_radar.png",
+  "_schema": {
+    "INPUT_FILENAME":   { "label": "입력 파일명",      "hint": "_company/data/ 안의 CSV" },
+    "ITEM_COL":         { "label": "항목 컬럼명",      "hint": "각 행의 이름 (장르명 등)" },
+    "SCORE_COLS":       { "label": "지표 컬럼 목록",   "hint": "3개 이상 필수. 레이더 축이 됨" },
+    "HIGHER_IS_BETTER": { "label": "높을수록 유리 여부", "hint": "false면 차트에서 반전 표시" },
+    "NORMALIZE":        { "label": "min-max 정규화",   "hint": "true 권장. false면 원본 값 그대로" },
+    "MAX_ITEMS":        { "label": "최대 표시 항목 수", "hint": "초과 시 앞 N개만 사용. 8 이하 권장" },
+    "OUTPUT_FILENAME":  { "label": "리포트 파일명",    "hint": "_company/reports/ 에 저장" },
+    "OUTPUT_PLOT":      { "label": "레이더 차트 PNG",  "hint": "_company/reports/ 에 저장" }
+  }
+}
