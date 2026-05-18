@@ -34,6 +34,9 @@ public class QueryService {
     @Value("${ollama.llm-model}")
     private String llmModel;
 
+    @Value("${python.api-url:http://localhost:8000}")
+    private String pythonApiUrl;
+
     @Transactional
     public UserQuery process(String queryText, String sessionId) {
         long start = System.currentTimeMillis();
@@ -70,7 +73,7 @@ public class QueryService {
     @SuppressWarnings("unchecked")
     private Map<String, Object> requestPythonAnalysis(String queryText) {
         return restClient.post()
-                .uri("http://localhost:8000/analyze")
+                .uri(pythonApiUrl + "/analyze")
                 .body(Map.of("query", queryText))
                 .retrieve()
                 .body(Map.class);

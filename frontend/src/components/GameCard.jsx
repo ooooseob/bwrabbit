@@ -29,9 +29,25 @@ export default function GameCard({ game }) {
             <span className={ratio >= 70 ? styles.positive : styles.negative}>호감도 {ratio}%</span>
           )}
           {game.priceFinal != null && (
-            <span className={styles.price}>
-              {game.priceFinal === 0 ? '무료' : `₩${game.priceFinal.toLocaleString()}`}
-            </span>
+            <div className={styles.priceContainer}>
+              {game.priceInitial && game.priceInitial > game.priceFinal ? (
+                <>
+                  <span className={styles.discountBadge}>
+                    -{Math.round(((game.priceInitial - game.priceFinal) / game.priceInitial) * 100)}%
+                  </span>
+                  <span className={styles.originalPrice}>
+                    ₩{game.priceInitial.toLocaleString()}
+                  </span>
+                  <span className={styles.discountedPrice}>
+                    ₩{game.priceFinal.toLocaleString()}
+                  </span>
+                </>
+              ) : (
+                <span className={styles.price}>
+                  {game.priceFinal === 0 ? '무료' : `₩${game.priceFinal.toLocaleString()}`}
+                </span>
+              )}
+            </div>
           )}
         </div>
         {game.genres?.length > 0 && (

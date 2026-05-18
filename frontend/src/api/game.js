@@ -9,3 +9,6 @@ export const getGame = steamAppId => client.get(`/games/${steamAppId}`).then(r =
 
 export const sendQuery = (query, sessionId) =>
   client.post('/query', { query, sessionId }).then(r => r.data)
+
+export const getGamesPaged = (page = 0, size = 8) =>
+  client.get('/games', { params: { page, size } }).then(r => r.data)

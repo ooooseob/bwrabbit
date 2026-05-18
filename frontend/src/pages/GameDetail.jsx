@@ -37,9 +37,25 @@ export default function GameDetail() {
           {game.shortDescription && <p className={styles.desc}>{game.shortDescription}</p>}
           <div className={styles.metaRow}>
             {game.priceFinal != null && (
-              <span className={styles.price}>
-                {game.priceFinal === 0 ? '무료' : `₩${game.priceFinal.toLocaleString()}`}
-              </span>
+              <div className={styles.priceContainer}>
+                {game.priceInitial && game.priceInitial > game.priceFinal ? (
+                  <>
+                    <span className={styles.discountBadge}>
+                      -{Math.round(((game.priceInitial - game.priceFinal) / game.priceInitial) * 100)}%
+                    </span>
+                    <span className={styles.originalPrice}>
+                      ₩{game.priceInitial.toLocaleString()}
+                    </span>
+                    <span className={styles.discountedPrice}>
+                      ₩{game.priceFinal.toLocaleString()}
+                    </span>
+                  </>
+                ) : (
+                  <span className={styles.price}>
+                    {game.priceFinal === 0 ? '무료' : `₩${game.priceFinal.toLocaleString()}`}
+                  </span>
+                )}
+              </div>
             )}
             {ratio !== null && (
               <span className={ratio >= 70 ? styles.positive : styles.negative}>

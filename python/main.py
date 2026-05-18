@@ -1,17 +1,66 @@
 import json
+import logging
 import re
 from datetime import datetime
 
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from db import get_db
+from db import check_db_connection, get_db
 from embedder import embed
 from steam_fetcher import fetch_steam_detail, fetch_steamspy, parse_release_date
 
+
+class HealthEndpointAccessFilter(logging.Filter):
+    # 헬스 체크 요청은 정상 동작 중 반복 호출되므로 접근 로그에서만 제외한다.
+    def filter(self, record: logging.LogRecord) -> bool:
+        message = record.getMessage()
+        return "/health/live" not in message and "/health/ready" not in message
+
+
+uvicorn_access_logger = logging.getLogger("uvicorn.access")
+if not any(isinstance(existing_filter, HealthEndpointAccessFilter) for existing_filter in uvicorn_access_logger.filters):
+    uvicorn_access_logger.addFilter(HealthEndpointAccessFilter())
+
+
 app = FastAPI(title="gWeb2 Python Service", version="0.1.0")
+
+
+@app.get("/health/live", status_code=200)
+def live_health():
+    return {
+        "status": "UP",
+        "service": "python-api",
+    }
+
+
+@app.get("/health/ready", status_code=200)
+def ready_health():
+    try:
+        check_db_connection()
+    except Exception as exc:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "DOWN",
+                "service": "python-api",
+                "details": {
+                    "database": "DOWN",
+                    "reason": str(exc),
+                },
+            },
+        )
+
+    return {
+        "status": "UP",
+        "service": "python-api",
+        "details": {
+            "database": "UP",
+        },
+    }
 
 
 # ── 요청/응답 모델 ──────────────────────────────────────────────────────────────
@@ -52,6 +101,12 @@ def fetch_game(req: FetchRequest, db: Session = Depends(get_db)):
 
     # 기본 정보 파싱
     price_data = detail.get("price_overview", {})
+    price_initial = price_data.get("initial")
+    price_final = price_data.get("final")
+    if price_initial is not None:
+        price_initial = price_initial // 100
+    if price_final is not None:
+        price_final = price_final // 100
     release_raw = detail.get("release_date", {}).get("date")
     release_date = parse_release_date(release_raw)
 
@@ -96,8 +151,8 @@ def fetch_game(req: FetchRequest, db: Session = Depends(get_db)):
         "header_image": detail.get("header_image", ""),
         "release_date": release_date,
         "is_free": detail.get("is_free", False),
-        "price_initial": price_data.get("initial"),
-        "price_final": price_data.get("final"),
+        "price_initial": price_initial,
+        "price_final": price_final,
         "metacritic": detail.get("metacritic", {}).get("score"),
         "website": detail.get("website", ""),
         "owners_min": owners_parts[0] if len(owners_parts) > 0 else None,

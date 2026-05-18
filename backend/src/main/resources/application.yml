@@ -27,6 +27,9 @@ ollama:
   llm-model: gemma4:e2b
   embed-model: bge-m3
 
+python:
+  api-url: http://localhost:8000
+
 logging:
   level:
     com.gweb2: DEBUG

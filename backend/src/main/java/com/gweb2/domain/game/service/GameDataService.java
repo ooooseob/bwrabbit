@@ -4,11 +4,14 @@ import com.gweb2.domain.game.entity.Game;
 import com.gweb2.domain.game.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +23,9 @@ public class GameDataService {
     private final GameRepository gameRepository;
     private final RestClient restClient;
 
+    @Value("${python.api-url:http://localhost:8000}")
+    private String pythonApiUrl;
+
     public Game requestDataFetch(Long appId) {
         if (gameRepository.existsBySteamAppId(appId)) {
             log.info("Game {} already exists in DB", appId);
@@ -29,7 +35,7 @@ public class GameDataService {
         log.info("Requesting Python to fetch game appId={}", appId);
         try {
             Map<?, ?> response = restClient.post()
-                    .uri("http://localhost:8000/fetch")
+                    .uri(pythonApiUrl + "/fetch")
                     .body(Map.of("app_id", appId))
                     .retrieve()
                     .body(Map.class);
@@ -53,4 +59,10 @@ public class GameDataService {
         return gameRepository.findBySteamAppId(steamAppId)
                 .orElseThrow(() -> new IllegalArgumentException("Game not found: " + steamAppId));
     }
+
+    @Transactional(readOnly = true)
+    public Page<Game> getGames(Pageable pageable) {
+        return gameRepository.findAll(pageable);
+    }
 }
+

@@ -4,6 +4,7 @@ import { playwright } from '@vitest/browser-playwright'
 
 // https://vite.dev/config/
 export default defineConfig({
+  envDir: '..',
   plugins: [react()],
   test: {
     globals: true,

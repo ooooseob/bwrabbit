@@ -8,6 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import java.util.List;
 
 @RestController
@@ -37,4 +41,13 @@ public class GameController {
         var game = gameDataService.getGame(steamAppId);
         return ResponseEntity.ok(GameSummaryResponse.from(game));
     }
+
+    // 전체 게임 페이징 조회
+    @GetMapping
+    public ResponseEntity<Page<GameSummaryResponse>> getGames(
+            @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        var gamesPage = gameDataService.getGames(pageable);
+        return ResponseEntity.ok(gamesPage.map(GameSummaryResponse::from));
+    }
 }
+

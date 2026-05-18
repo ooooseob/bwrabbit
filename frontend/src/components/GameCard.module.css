@@ -68,6 +68,34 @@
   margin-left: auto;
 }
 
+.priceContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.discountBadge {
+  background: var(--negative);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.originalPrice {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.discountedPrice {
+  font-size: 0.82rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
 .tags {
   display: flex;
   gap: 0.35rem;

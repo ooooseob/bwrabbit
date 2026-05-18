@@ -127,3 +127,34 @@
   color: var(--text-muted);
   line-height: 1.5;
 }
+
+/* Catalog Section */
+.catalog {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.catalogTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.loadingText {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 2rem 0;
+}

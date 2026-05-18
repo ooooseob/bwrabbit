@@ -1,5 +1,10 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useInput } from '../hooks/useInput'
+import { useAsync } from '../hooks/useAsync'
+import { getGamesPaged } from '../api/game'
+import GameCard from '../components/GameCard'
+import Pagination from '../components/Pagination'
 import styles from './Home.module.css'
 
 /**
@@ -8,6 +13,20 @@ import styles from './Home.module.css'
 export default function Home() {
   const [keyword, onChangeKeyword] = useInput('')
   const navigate = useNavigate()
+
+  // 페이징 상태 관리
+  const [page, setPage] = useState(0)
+
+  // useAsync 커스텀 훅을 활용한 비동기 상태 관리 및 선언적 데이터 로딩
+  const { execute: fetchGames, loading, data } = useAsync(getGamesPaged)
+
+  // page가 변경될 때마다 비동기 함수 호출
+  useEffect(() => {
+    fetchGames(page, 8)
+  }, [page, fetchGames])
+
+  const games = data?.content || []
+  const totalPages = data?.totalPages || 1
 
   /**
    * 검색 폼 제출 이벤트 핸들러
@@ -59,6 +78,30 @@ export default function Home() {
           to='/fetch'
         />
       </div>
+
+      {/* 등록된 게임 목록 및 페이지네이션 섹션 */}
+      <section className={styles.catalog}>
+        <h2 className={styles.catalogTitle}>등록된 게임</h2>
+
+        {loading ? (
+          <p className={styles.loadingText}>불러오는 중...</p>
+        ) : (
+          <>
+            {games.length === 0 ? (
+              <p className={styles.loadingText}>등록된 게임이 없습니다.</p>
+            ) : (
+              <div className={styles.grid}>
+                {games.map(game => (
+                  <GameCard key={game.steamAppId} game={game} />
+                ))}
+              </div>
+            )}
+
+            {/* 재사용 가능한 모듈화된 페이지네이션 컴포넌트 */}
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          </>
+        )}
+      </section>
     </main>
   )
 }

@@ -44,6 +44,19 @@ describe('GameCard', () => {
     expect(screen.getByText('무료')).toBeDefined()
   })
 
+  it('할인이 활성화되었을 때 할인율과 원가를 함께 렌더링해야 한다', () => {
+    const discountGame = { ...mockGame, priceInitial: 30000, priceFinal: 15000 }
+    render(
+      <MemoryRouter>
+        <GameCard game={discountGame} />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('-50%')).toBeDefined()
+    expect(screen.getByText('₩30,000')).toBeDefined()
+    expect(screen.getByText('₩15,000')).toBeDefined()
+  })
+
   it('상세 페이지로 이동하는 링크를 포함해야 한다', () => {
     render(
       <MemoryRouter>
